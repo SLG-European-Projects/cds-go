@@ -74,18 +74,24 @@ func DownloadFileAsBytes(url string) ([]byte, error) {
 	return data, nil
 }
 
-func DownloadFileReader(url string) (io.ReadCloser, error) {
+func DownloadFileReader(url string) (io.ReadCloser, int, error) {
 	// Create an HTTP GET request
 	resp, err := http.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("failed to make HTTP GET request: %w", err)
+		return nil, 0, fmt.Errorf("failed to make HTTP GET request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	// Check if the response status code is 200 OK
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to download file: status code %d", resp.StatusCode)
+		return nil, 0, fmt.Errorf("failed to download file: status code %d", resp.StatusCode)
 	}
 
-	return resp.Body, nil
+	size, err := strconv.Atoi(resp.Header.Get("Content-Length"))
+	if err != nil {
+		return nil, 0, fmt.Errorf("No Content-Length in Headers")
+	}
+
+	return resp.Body, size, nil
+
 }
