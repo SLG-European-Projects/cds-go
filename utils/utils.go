@@ -80,7 +80,7 @@ func DownloadFileReader(url string) (io.ReadCloser, int, error) {
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to make HTTP GET request: %w", err)
 	}
-	defer resp.Body.Close()
+	// defer resp.Body.Close()
 
 	// Check if the response status code is 200 OK
 	if resp.StatusCode != http.StatusOK {
