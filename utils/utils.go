@@ -73,3 +73,19 @@ func DownloadFileAsBytes(url string) ([]byte, error) {
 
 	return data, nil
 }
+
+func DownloadFileReader(url string) (io.ReadCloser, error) {
+	// Create an HTTP GET request
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("failed to make HTTP GET request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// Check if the response status code is 200 OK
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to download file: status code %d", resp.StatusCode)
+	}
+
+	return resp.Body, nil
+}
